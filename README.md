@@ -43,7 +43,6 @@
         await TldAmapSearch.initKey(androidKey: '安卓key', iosKey: '苹果key');
     print(result);
   }
-  ```
 
   ```dart
   /// 设置隐私权限
