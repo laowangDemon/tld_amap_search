@@ -33,8 +33,8 @@
 2. ###### 在官方sdk上重新封装过，如需使用，可单独引入：
 
    (1).定位权限配置，使用第三方 permission_handler 动态权限工具，  使用方法请移步 permission_handler
-   (2).tld_amapsearch使用
 
+3. ###### 使用示例
    ``` Dart
   Future<void> initAmapKey() async {
     bool result =
@@ -83,7 +83,7 @@
     await TldAmapSearch.reGeocoding(
         longitude: 106.642904, latitude: 26.653841, back: (code, data) {});
   }
-  
+
   ```
 
 
