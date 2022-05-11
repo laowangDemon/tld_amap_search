@@ -1,4 +1,4 @@
-# xbr_gaode_amap
+# tld_amapsearch
 
 #### 介绍
 高德地图插件的封装，在官方基础上增加查询控件，可以dev搜索以下控件:
