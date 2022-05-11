@@ -31,24 +31,29 @@
    ```
 
 2. ###### 在官方sdk上重新封装过，如需使用，可单独引入：
+   定位权限配置，使用第三方 permission_handler 动态权限工具，  使用方法请移步 permission_handler
 
-   (1).定位权限配置，使用第三方 permission_handler 动态权限工具，  使用方法请移步 permission_handler
+3. ###### 使用
 
-3. ###### 使用示例
-  
-
-   ``` dart
+   ```dart
+       /// 初始化高德key
   Future<void> initAmapKey() async {
     bool result =
         await TldAmapSearch.initKey(androidKey: '安卓key', iosKey: '苹果key');
     print(result);
   }
+  ```
 
+  ```dart
+  /// 设置隐私权限
   setPrivacy() async {
     await TldAmapSearch.updatePrivacyShow(hasShow: true, hasContains: true);
     await TldAmapSearch.updatePrivacyAgree(hasAgree: true);
   }
+  ```
 
+  ```dart
+  /// 周边范围搜索
   void searchAround() async {
     await TldAmapSearch.searchAround(
         longitude: 106.642904,
@@ -57,7 +62,10 @@
           print(data);
         });
   }
+  ```
 
+  ```dart
+  /// 关键字搜索
   void searchkeyword() async {
     await TldAmapSearch.searchKeyword(
         keyWord: '万达广场',
@@ -65,7 +73,10 @@
           print(data);
         });
   }
+  ```
   
+  ```dart
+  /// 天气查询
   void searchWeather() async {
     await TldAmapSearch.weatherSearch(
         city: '北京市',
@@ -77,7 +88,10 @@
           print(result);
         });
   }
+  ```
 
+  ```dart
+  // 地理编码
   void geocode() async {
     //地理编码
     await TldAmapSearch.geocoding(address: "北京市", back: (code, data) {});
@@ -85,7 +99,6 @@
     await TldAmapSearch.reGeocoding(
         longitude: 106.642904, latitude: 26.653841, back: (code, data) {});
   }
-
-  ```
+   ```
 
 
