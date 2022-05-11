@@ -35,7 +35,7 @@
    (1).定位权限配置，使用第三方 permission_handler 动态权限工具，  使用方法请移步 permission_handler
    (2).tld_amapsearch使用
 
-   ```dart
+   ``` Dart
   Future<void> initAmapKey() async {
     bool result =
         await TldAmapSearch.initKey(androidKey: '安卓key', iosKey: '苹果key');
@@ -83,6 +83,7 @@
     await TldAmapSearch.reGeocoding(
         longitude: 106.642904, latitude: 26.653841, back: (code, data) {});
   }
-   ```
+  
+  ```
 
 
