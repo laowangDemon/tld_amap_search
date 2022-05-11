@@ -32,7 +32,6 @@
 
 2. ###### 在官方sdk上重新封装过，如需使用，可单独引入：
 
-
    (1).定位权限配置，使用第三方 permission_handler 动态权限工具，  使用方法请移步 permission_handler
    (2).tld_amapsearch使用
 
@@ -44,15 +43,12 @@
     print(result);
   }
 
-  ```dart
   /// 设置隐私权限
   setPrivacy() async {
     await TldAmapSearch.updatePrivacyShow(hasShow: true, hasContains: true);
     await TldAmapSearch.updatePrivacyAgree(hasAgree: true);
   }
-  ```
 
-  ```dart
   /// 周边范围搜索
   void searchAround() async {
     await TldAmapSearch.searchAround(
@@ -62,9 +58,7 @@
           print(data);
         });
   }
-  ```
 
-  ```dart
   /// 关键字搜索
   void searchkeyword() async {
     await TldAmapSearch.searchKeyword(
@@ -73,9 +67,7 @@
           print(data);
         });
   }
-  ```
   
-  ```dart
   /// 天气查询
   void searchWeather() async {
     await TldAmapSearch.weatherSearch(
@@ -88,9 +80,7 @@
           print(result);
         });
   }
-  ```
 
-  ```dart
   // 地理编码
   void geocode() async {
     //地理编码
