@@ -46,7 +46,7 @@
 
   ```dart
   /// 设置隐私权限
-  setPrivacy() async {
+  void setPrivacy() async {
     await TldAmapSearch.updatePrivacyShow(hasShow: true, hasContains: true);
     await TldAmapSearch.updatePrivacyAgree(hasAgree: true);
   }
