@@ -37,7 +37,7 @@
    (2).tld_amapsearch使用
 
    ```dart
-       /// 初始化高德key
+  /// 初始化高德key
   Future<void> initAmapKey() async {
     bool result =
         await TldAmapSearch.initKey(androidKey: '安卓key', iosKey: '苹果key');
