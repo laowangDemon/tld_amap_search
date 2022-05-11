@@ -36,20 +36,17 @@
    (2).tld_amapsearch使用
 
    ```dart
-  /// 初始化高德key
   Future<void> initAmapKey() async {
     bool result =
         await TldAmapSearch.initKey(androidKey: '安卓key', iosKey: '苹果key');
     print(result);
   }
 
-  /// 设置隐私权限
   setPrivacy() async {
     await TldAmapSearch.updatePrivacyShow(hasShow: true, hasContains: true);
     await TldAmapSearch.updatePrivacyAgree(hasAgree: true);
   }
 
-  /// 周边范围搜索
   void searchAround() async {
     await TldAmapSearch.searchAround(
         longitude: 106.642904,
@@ -59,7 +56,6 @@
         });
   }
 
-  /// 关键字搜索
   void searchkeyword() async {
     await TldAmapSearch.searchKeyword(
         keyWord: '万达广场',
@@ -68,7 +64,6 @@
         });
   }
   
-  /// 天气查询
   void searchWeather() async {
     await TldAmapSearch.weatherSearch(
         city: '北京市',
@@ -81,7 +76,6 @@
         });
   }
 
-  // 地理编码
   void geocode() async {
     //地理编码
     await TldAmapSearch.geocoding(address: "北京市", back: (code, data) {});
