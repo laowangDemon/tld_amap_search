@@ -262,6 +262,16 @@
     self.result(jsonStr);
 }
 
+- (void)AMapSearchRequest:(id)request didFailWithError:(NSError *)error{
+    NSDictionary* map = @{
+        @"code":[NSNumber numberWithInteger:error.code],
+        @"message":@"请参考错误码"
+    };
+    //转 json 字符串
+    NSData* jsonData =[NSJSONSerialization dataWithJSONObject:map options:NSJSONWritingPrettyPrinted error:nil];
+    NSString* jsonStr =[[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    self.result(jsonStr);
+}
 
 
 //转NSMutableDictionary
