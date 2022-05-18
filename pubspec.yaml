@@ -1,6 +1,6 @@
 name: tld_amapsearch
 description: 高德地图插件，增加查询功能以及天气服务
-version: 0.0.3
+version: 0.0.4
 homepage: https://github.com/aiqianqianli/tld_amap_search
 
 environment:

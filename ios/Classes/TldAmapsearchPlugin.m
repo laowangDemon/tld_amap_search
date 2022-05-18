@@ -156,6 +156,7 @@
         [dict setValue:poi.tel forKey:@"tel"];
         [dict setValue:[NSString stringWithFormat:@"%ld",(long)poi.distance] forKey:@"distance"];
         [dict setValue:poi.name forKey:@"title"];
+        [dict setValue:poi.district forKey:@"district"];
         [pois addObject:dict];
     }
     //重新构造完成 数据为配合android已调整
