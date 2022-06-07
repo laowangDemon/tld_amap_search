@@ -8,6 +8,8 @@ import 'package:tld_amapsearch/geocoding_result.dart';
 import 'package:tld_amapsearch/live_result.dart';
 import 'package:tld_amapsearch/poiresult.dart';
 import 'package:tld_amapsearch/regeocoding_result.dart';
+import 'package:tld_amapsearch/route_result.dart';
+import 'package:tld_amapsearch/truckInfo_result.dart';
 
 class TldAmapSearch {
   static const MethodChannel _channel = MethodChannel('tld_AmapSearch');
@@ -138,6 +140,39 @@ class TldAmapSearch {
       Map? map = json.decode(jsonStr);
       if (map != null && back != null) {
         back(map['code'] as int, ReGeocodingResult.fromJson(map["data"]));
+      }
+    }
+  }
+
+  /// 驾车线路规划
+  static Future<void> routeSearch({
+    required List<SearchLocation> wayPoints,
+    int? drivingMode,
+    RouteResultBack? back,
+  }) async {
+    final String? jsonStr = await _channel.invokeMethod('routeSearch', {
+      "wayPointsJson": json.encode(wayPoints),
+      "drivingMode": drivingMode,
+    });
+    if (jsonStr != null) {
+      Map? map = json.decode(jsonStr);
+      if (map != null && back != null) {
+        back(map['code'] as int, RouteResult.fromJson(map["data"]));
+      }
+    }
+  }
+
+  /// 步行线路规划
+  static Future<void> truckRouteSearch({
+    required List<SearchLocation> wayPoints,
+    RouteResultBack? back,
+  }) async {
+    final String? jsonStr = await _channel.invokeMethod(
+        'truckRouteSearch', {"wayPointsJson": json.encode(wayPoints)});
+    if (jsonStr != null) {
+      Map? map = json.decode(jsonStr);
+      if (map != null && back != null) {
+        back(map['code'] as int, RouteResult.fromJson(map["data"]));
       }
     }
   }

@@ -53,7 +53,66 @@
             double lng = [args[@"longitude"] doubleValue];
             int scope = 300;
             [self searchReGeoWithLng:lng andLat:lat andScope:scope];
-        }else{
+        } else if ( ([@"routeSearch" isEqualToString:call.method])) {
+            NSNumber* drivingMode = args[@"drivingMode"];
+            NSString* wayPointsJson = args[@"wayPointsJson"];
+            //JSON转
+            NSData *data = [wayPointsJson dataUsingEncoding:NSUTF8StringEncoding];
+            //佣数组来接收
+            NSArray *pointArr = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+            //点位也是一个数组 起点数组
+            NSDictionary *start =pointArr.firstObject;
+            double lat1 = [start[@"latitude"] doubleValue];
+            double lng1 = [start[@"longitude"] doubleValue];
+            //点位也是一个数组 终点 [0-lat,1-lon]
+            NSDictionary *end =pointArr.lastObject;
+            double lat2 = [end[@"latitude"] doubleValue];
+            double lng2 = [end[@"longitude"] doubleValue];
+            //起点对象
+            AMapGeoPoint* origin =[AMapGeoPoint locationWithLatitude:lat1 longitude:lng1];
+            //终点对象
+            AMapGeoPoint* destination =[AMapGeoPoint locationWithLatitude:lat2 longitude:lng2];
+            //构造途径点对象集合
+            NSMutableArray<AMapGeoPoint *> *waypoints = [NSMutableArray array];
+            [waypoints addObject:origin];
+            [waypoints addObject:destination];
+            //构造高德地图检索请求
+            AMapDrivingRouteSearchRequest *navi = [[AMapDrivingRouteSearchRequest alloc] init];
+            navi.requireExtension = YES;
+            if(![drivingMode isEqual:[NSNull null]]){
+                navi.strategy = drivingMode.intValue;
+            }
+            navi.origin = origin;
+            navi.destination = destination;
+            navi.waypoints = waypoints;
+            //发送请求
+            [self.search AMapDrivingRouteSearch:navi];
+        } else if ( ([@"truckRouteSearch" isEqualToString:call.method])) {
+            NSString* wayPointsJson = args[@"wayPointsJson"];
+            //JSON转
+            NSData *data = [wayPointsJson dataUsingEncoding:NSUTF8StringEncoding];
+            //佣数组来接收
+            NSArray *pointArr = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+            //点位也是一个数组 起点数组
+            NSDictionary *start =pointArr.firstObject;
+            double lat1 = [start[@"latitude"] doubleValue];
+            double lng1 = [start[@"longitude"] doubleValue];
+            //点位也是一个数组 终点 [0-lat,1-lon]
+            NSDictionary *end =pointArr.lastObject;
+            double lat2 = [end[@"latitude"] doubleValue];
+            double lng2 = [end[@"longitude"] doubleValue];
+            //起点对象
+            AMapGeoPoint* origin =[AMapGeoPoint locationWithLatitude:lat1 longitude:lng1];
+            //终点对象
+            AMapGeoPoint* destination =[AMapGeoPoint locationWithLatitude:lat2 longitude:lng2];
+
+            //构造高德地图检索请求
+            AMapWalkingRouteSearchRequest *nav = [[AMapWalkingRouteSearchRequest alloc]  init];
+            nav.origin=origin;
+            nav.destination=destination;
+            //发送请求
+            [self.search AMapWalkingRouteSearch:nav];
+        } else{
             result(FlutterMethodNotImplemented);
         }
     }
@@ -255,6 +314,29 @@
         @"code":@1000,
         @"data":@{
             @"regeocodeAddress":regeocodeAddress
+        }
+    };
+    //转 json 字符串
+    NSData* jsonData =[NSJSONSerialization dataWithJSONObject:map options:NSJSONWritingPrettyPrinted error:nil];
+    NSString* jsonStr =[[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    self.result(jsonStr);
+}
+
+/* 路径规划(含货车)搜索回调. */
+- (void)onRouteSearchDone:(AMapRouteSearchBaseRequest *)request response:(AMapRouteSearchResponse *)response{
+    AMapRoute *route = [response route];
+    //只返回驾车路径信息
+    NSArray<AMapPath *>* pathArr = [route paths];
+    NSMutableArray<NSDictionary *> *paths = [NSMutableArray arrayWithCapacity:pathArr.count];
+    for(AMapPath* path in pathArr){
+        //NSString *polyline = [path polyline];
+        [paths addObject:[self getObjectData:path]];
+    }
+    //重新构造完成 数据为配合android已调整
+    NSDictionary* map = @{
+        @"code":@1000,
+        @"data":@{
+            @"paths":paths
         }
     };
     //转 json 字符串
