@@ -55,19 +55,10 @@
             [self searchReGeoWithLng:lng andLat:lat andScope:scope];
         } else if ( ([@"routeSearch" isEqualToString:call.method])) {
             NSNumber* drivingMode = args[@"drivingMode"];
-            NSString* wayPointsJson = args[@"wayPointsJson"];
-            //JSON转
-            NSData *data = [wayPointsJson dataUsingEncoding:NSUTF8StringEncoding];
-            //佣数组来接收
-            NSArray *pointArr = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-            //点位也是一个数组 起点数组
-            NSDictionary *start =pointArr.firstObject;
-            double lat1 = [start[@"latitude"] doubleValue];
-            double lng1 = [start[@"longitude"] doubleValue];
-            //点位也是一个数组 终点 [0-lat,1-lon]
-            NSDictionary *end =pointArr.lastObject;
-            double lat2 = [end[@"latitude"] doubleValue];
-            double lng2 = [end[@"longitude"] doubleValue];
+            double lat1 = [args[@"startLat"] doubleValue];
+            double lng1 = [args[@"startLng"] doubleValue];
+            double lat2 = [args[@"endLat"] doubleValue];
+            double lng2 = [args[@"endLng"] doubleValue];
             //起点对象
             AMapGeoPoint* origin =[AMapGeoPoint locationWithLatitude:lat1 longitude:lng1];
             //终点对象
@@ -89,18 +80,10 @@
             [self.search AMapDrivingRouteSearch:navi];
         } else if ( ([@"truckRouteSearch" isEqualToString:call.method])) {
             NSString* wayPointsJson = args[@"wayPointsJson"];
-            //JSON转
-            NSData *data = [wayPointsJson dataUsingEncoding:NSUTF8StringEncoding];
-            //佣数组来接收
-            NSArray *pointArr = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-            //点位也是一个数组 起点数组
-            NSDictionary *start =pointArr.firstObject;
-            double lat1 = [start[@"latitude"] doubleValue];
-            double lng1 = [start[@"longitude"] doubleValue];
-            //点位也是一个数组 终点 [0-lat,1-lon]
-            NSDictionary *end =pointArr.lastObject;
-            double lat2 = [end[@"latitude"] doubleValue];
-            double lng2 = [end[@"longitude"] doubleValue];
+            double lat1 = [args[@"startLat"] doubleValue];
+            double lng1 = [args[@"startLng"] doubleValue];
+            double lat2 = [args[@"endLat"] doubleValue];
+            double lng2 = [args[@"endLng"] doubleValue];
             //起点对象
             AMapGeoPoint* origin =[AMapGeoPoint locationWithLatitude:lat1 longitude:lng1];
             //终点对象
