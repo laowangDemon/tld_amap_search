@@ -1,4 +1,6 @@
 package com.tld.extend.tld_amapsearch;
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import java.util.HashMap;
@@ -17,6 +19,7 @@ public class JsonUtil {
     public static <T> T fromJson(String json, TypeReference<T> typeReference){
         if (json==null) return null;
         try {
+            Log.i("json",JSON.parseObject(json,typeReference).toString());
             return JSON.parseObject(json,typeReference);
         }catch (Exception e){
             return null;

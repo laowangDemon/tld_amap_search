@@ -8,12 +8,23 @@ import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
+import com.amap.api.services.route.WalkPath;
+import com.amap.api.services.route.WalkRouteResult;
+import com.amap.api.services.route.WalkStep;
 import com.amap.api.services.weather.LocalDayWeatherForecast;
 import com.amap.api.services.weather.LocalWeatherForecastResult;
 import com.amap.api.services.weather.LocalWeatherLive;
 import com.amap.api.services.weather.LocalWeatherLiveResult;
 import com.amap.api.services.weather.WeatherSearch;
 import com.amap.api.services.weather.WeatherSearchQuery;
+import com.amap.api.services.route.District;
+import com.amap.api.services.route.DrivePath;
+import com.amap.api.services.route.DriveRouteResult;
+import com.amap.api.services.route.DriveStep;
+import com.amap.api.services.route.RouteSearch;
+import com.amap.api.services.route.RouteSearchCity;
+import com.amap.api.services.route.TMC;
+import com.tld.extend.tld_amapsearch.PoiQueryListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -167,6 +178,117 @@ public class AmapSearchClient {
             });
             weatherSearch.searchWeatherAsyn(); //异步搜索
         }catch (AMapException e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 普通线路规划
+     */
+    RouteSearch routeSearch;
+
+    public RouteSearch getRouteSearch() throws AMapException {
+        if (routeSearch == null) routeSearch = new RouteSearch(context);
+        return routeSearch;
+    }
+
+    public void routeSearch(LatLonPoint start,LatLonPoint end, Integer drivingMode, final SearchBack searchBack) {
+        try {
+            final RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(
+                    start, end);
+            RouteSearch.DriveRouteQuery query = new RouteSearch.DriveRouteQuery(fromAndTo, 0, null,
+                    null, "");// 第一个
+            getRouteSearch().setRouteSearchListener(new DriveRouteSearchListener() {
+                @Override
+                public void onDriveRouteSearched(DriveRouteResult driveRouteResult, int i) {
+                    Map<String,Object> map = new HashMap<>();
+                    List<DrivePath> drivePaths = driveRouteResult.getPaths();
+                    List<Map<String,Object>> paths = new ArrayList<>();
+                    for (DrivePath drivePath:drivePaths){
+                        Map<String, Object> pathMap = JsonUtil.toMap(drivePath);
+                        String polyline = LatlngUtil.objListJoin(drivePath.getPolyline());
+                        pathMap.put("polyline",polyline);
+                        List<Map<String,Object>> steps = new ArrayList<>();
+                        for (DriveStep step : drivePath.getSteps()){
+                            Map<String, Object> stepMap = JsonUtil.toMap(step);
+                            List<Map<String,Object>> citys = new ArrayList<>();
+                            for (RouteSearchCity city:step.getRouteSearchCityList()){
+                                Map<String, Object> cityMap = JsonUtil.toMap(city);
+                                cityMap.put("city",city.getSearchCityName());
+                                cityMap.put("adcode",city.getSearchCityAdCode());
+                                cityMap.put("citycode",city.getSearchCitycode());
+                                List<Map<String,Object>> districts = new ArrayList<>();
+                                for (District district:city.getDistricts()){
+                                    Map<String, Object> districtMap = JsonUtil.toMap(district);
+                                    districtMap.put("adcode",district.getDistrictAdcode());
+                                    districtMap.put("name",district.getDistrictName());
+                                    districts.add(districtMap);
+                                }
+                                cityMap.put("district",districts);
+                                citys.add(cityMap);
+                            }
+                            stepMap.remove("routeSearchCityList");
+                            stepMap.put("cities",citys);
+                            List<Map<String,Object>> tmcs = new ArrayList<>();
+                            for (TMC tmc:step.getTMCs()){
+                                Map<String, Object> tmcMap = JsonUtil.toMap(tmc);
+                                tmcMap.put("polyline",LatlngUtil.objListJoin(tmc.getPolyline()));
+                            }
+                            stepMap.remove("tMCs");
+                            stepMap.put("tmcs",tmcs);
+                            stepMap.put("polyline",LatlngUtil.objListJoin(step.getPolyline()));
+                            steps.add(stepMap);
+                        }
+                        pathMap.put("steps",steps);
+                        paths.add(pathMap);
+                    }
+                    map.put("paths",paths);
+                    searchBack.back(i,map);
+                }
+            });
+            getRouteSearch().calculateDriveRouteAsyn(query);
+        } catch (AMapException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 步行
+     */
+    public void truckRouteSearch(LatLonPoint start,LatLonPoint end, final SearchBack searchBack) {
+        try {
+          final RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(
+                  start, end);
+            RouteSearch.WalkRouteQuery query = new RouteSearch.WalkRouteQuery(fromAndTo, 0);
+            getRouteSearch().setRouteSearchListener(new DriveRouteSearchListener() {
+                @Override
+                public void onDriveRouteSearched(DriveRouteResult driveRouteResult, int i) {
+
+                }
+
+                @Override
+                public void onWalkRouteSearched(WalkRouteResult result, int code) {
+                    Map<String, Object> map = new HashMap<>();
+                    List<WalkPath> drivePaths = result.getPaths();
+                    List<Map<String, Object>> paths = new ArrayList<>();
+                    for (WalkPath walkPath : drivePaths) {
+                        Map<String, Object> pathMap = JsonUtil.toMap(walkPath);
+                        List<Map<String, Object>> steps = new ArrayList<>();
+                        StringBuilder polylineStr = new StringBuilder();
+                        for (WalkStep step : walkPath.getSteps()){
+                            Map<String, Object> stepMap = JsonUtil.toMap(step);
+                            stepMap.put("polyline",LatlngUtil.objListJoin(step.getPolyline()));
+                            steps.add(stepMap);
+                        }
+                        pathMap.put("steps",steps);
+                        paths.add(pathMap);
+                    }
+                    map.put("paths", paths);
+                    searchBack.back(code, map);
+                }
+            });
+            getRouteSearch().calculateWalkRouteAsyn(query);
+        } catch (AMapException e) {
             e.printStackTrace();
         }
     }

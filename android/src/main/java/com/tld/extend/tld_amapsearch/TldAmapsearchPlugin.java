@@ -1,14 +1,18 @@
 package com.tld.extend.tld_amapsearch;
 
 import android.app.Activity;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson.TypeReference;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.ServiceSettings;
+import com.tld.extend.tld_amapsearch.TruckInfo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -119,7 +123,35 @@ public class TldAmapsearchPlugin implements FlutterPlugin, MethodCallHandler, Ac
             result.success(JsonUtil.toJson(toResult(code,map)));
           }
         });
+      case "routeSearch": {
+        //线路规划
+        Integer drivingMode = call.argument("drivingMode");
+        double startLat = call.argument("startLat");
+        double startLng = call.argument("startLng");
+        double endLat = call.argument("endLat");
+        double endLng = call.argument("endLng");
+        getAmapSearchClient().routeSearch(new LatLonPoint(startLat, startLng),new LatLonPoint(endLat, endLng), drivingMode, new SearchBack() {
+          @Override
+          public void back(final int code,final Map<String,Object> map) {
+            result.success(JsonUtil.toJson(toResult(code,map)));
+          }
+        });
         break;
+      }
+      case "truckRouteSearch": {
+        //线路规划 --步行
+        double startLat = call.argument("startLat");
+        double startLng = call.argument("startLng");
+        double endLat = call.argument("endLat");
+        double endLng = call.argument("endLng");
+        getAmapSearchClient().truckRouteSearch(new LatLonPoint(startLat, startLng), new LatLonPoint(endLat, endLng), new SearchBack() {
+          @Override
+          public void back(final int code,final Map<String,Object> map) {
+            result.success(JsonUtil.toJson(toResult(code,map)));
+          }
+        });
+        break;
+      }
       default:
         result.notImplemented();
         break;

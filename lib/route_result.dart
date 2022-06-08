@@ -45,7 +45,6 @@ class Paths {
 
   Paths.fromJson(Map<String, dynamic> json) {
     restriction = json['restriction'];
-    polyline = json['polyline'];
     distance = json['distance'];
     if (json['steps'] != null) {
       steps = <Steps>[];
@@ -63,7 +62,6 @@ class Paths {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data['restriction'] = this.restriction;
-    data['polyline'] = this.polyline;
     data['distance'] = this.distance;
     if (this.steps != null) {
       data['steps'] = this.steps!.map((v) => v.toJson()).toList();

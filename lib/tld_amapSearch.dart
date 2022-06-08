@@ -146,12 +146,18 @@ class TldAmapSearch {
 
   /// 驾车线路规划
   static Future<void> routeSearch({
-    required List<SearchLocation> wayPoints,
+    required double startLat,
+    required double startLng,
+    required double endLat,
+    required double endLng,
     int? drivingMode,
     RouteResultBack? back,
   }) async {
     final String? jsonStr = await _channel.invokeMethod('routeSearch', {
-      "wayPointsJson": json.encode(wayPoints),
+      "startLat": startLat,
+      "startLng": startLng,
+      "endLat": endLat,
+      "endLng": endLng,
       "drivingMode": drivingMode,
     });
     if (jsonStr != null) {
@@ -164,11 +170,18 @@ class TldAmapSearch {
 
   /// 步行线路规划
   static Future<void> truckRouteSearch({
-    required List<SearchLocation> wayPoints,
+    required double startLat,
+    required double startLng,
+    required double endLat,
+    required double endLng,
     RouteResultBack? back,
   }) async {
-    final String? jsonStr = await _channel.invokeMethod(
-        'truckRouteSearch', {"wayPointsJson": json.encode(wayPoints)});
+    final String? jsonStr = await _channel.invokeMethod('truckRouteSearch', {
+      "startLat": startLat,
+      "startLng": startLng,
+      "endLat": endLat,
+      "endLng": endLng,
+    });
     if (jsonStr != null) {
       Map? map = json.decode(jsonStr);
       if (map != null && back != null) {
