@@ -4,8 +4,8 @@ version: 0.0.5
 homepage: https://github.com/aiqianqianli/tld_amap_search
 
 environment:
-  sdk: ">=2.16.1 <3.0.0"
-  flutter: ">=2.5.0"
+  sdk: ">=2.3.0 <3.0.0"
+#  flutter: ">=2.5.0"
 
 dependencies:
   flutter:
